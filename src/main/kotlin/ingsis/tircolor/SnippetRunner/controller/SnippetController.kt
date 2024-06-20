@@ -1,0 +1,28 @@
+package ingsis.tircolor.SnippetRunner.controller
+
+import ingsis.tircolor.SnippetRunner.model.dto.SnippetRunnerDTO
+import ingsis.tircolor.SnippetRunner.service.SnippetService
+import org.example.Output
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RestController
+import java.io.InputStream
+
+@RestController
+class SnippetController(private val snippetService : SnippetService) {
+    @PostMapping("/run")
+    fun runSnippet(@RequestHeader ("Authorization") token: String ,@RequestBody snippetRunnerDTO: SnippetRunnerDTO) : ResponseEntity<String> {
+        val languageService = snippetService.selectService(snippetRunnerDTO.language).runScript(snippetRunnerDTO.input, snippetRunnerDTO.version)
+        val output: Output = languageService.run { snippetRunnerDTO.input }
+        return ResponseEntity(output.string, HttpStatus.OK)
+    }
+    fun formatSnippet(language: String, script: InputStream, version: String){
+
+    }
+    fun runLinter (language: String, script: InputStream, version: String){
+
+    }
+}
