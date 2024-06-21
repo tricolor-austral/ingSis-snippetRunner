@@ -1,15 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'org.springframework.boot' version '2.7.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.jetbrains.kotlin.jvm' version '1.9.0'
-	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.0'
-	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.0'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'org.jetbrains.kotlin.jvm' version '1.9.23'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.23'
 }
+
+java {
+	sourceCompatibility = '21'
+}
+
 group = 'tricolor'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
+version = '1.1.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -18,7 +21,7 @@ repositories {
 		url = uri("https://maven.pkg.github.com/marcocastagnaro/IngSis")
 		credentials {
 			username = "marcocastagnaro"
-			password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+			password = project.findProperty("gpr.key") ?: getProperty("gpr.key")
 			println(password)
 		}
 	}
@@ -29,6 +32,8 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 
 	implementation 'ingsis:interpreter:1.1.5-SNAPSHOT'
 	implementation 'ingsis:parser:1.1.4-SNAPSHOT'
@@ -37,11 +42,12 @@ dependencies {
 	implementation 'ingsis:lexer:1.1.5-SNAPSHOT'
 	implementation 'ingsis:formatter:1.1.1-SNAPSHOT'
 	implementation 'ingsis:staticcodeeanalyzer:1.1.2-SNAPSHOT'
-	implementation 'ingsis:execute:1.1.2-SNAPSHOT'
+	implementation 'ingsis:execute:1.1.4-SNAPSHOT'
 }
 
 tasks.withType(KotlinCompile) {
 	kotlinOptions {
+		freeCompilerArgs += '-Xjsr305=strict'
 		jvmTarget = '21'
 	}
 }

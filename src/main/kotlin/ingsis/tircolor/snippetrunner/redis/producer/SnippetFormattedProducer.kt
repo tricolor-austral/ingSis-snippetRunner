@@ -5,16 +5,17 @@ import jdk.jfr.internal.OldObjectSample.emit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.ReactiveRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class SnippetFormattedProducer  @Autowired constructor(
-    @Value("\${stream.key}") val streamKey: String,
-    redis: ReactiveRedisTemplate<String, String>
+    @Value("\${stream.key}") streamKey: String,
+    redis: RedisTemplate<String, String>
 ) : RedisStreamProducer(streamKey, redis) {
 
     suspend fun publishEvent(snippet: FormatProduct) {
         println("Publishing on stream: $streamKey")
-        emit(snippet).awaitSingle()
+        emit(snippet)
     }
 }

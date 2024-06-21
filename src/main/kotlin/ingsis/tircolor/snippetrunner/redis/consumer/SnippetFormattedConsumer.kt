@@ -3,16 +3,16 @@ package ingsis.tircolor.snippetrunner.redis.consumer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.connection.stream.ObjectRecord
-import org.springframework.data.redis.core.ReactiveRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.stream.StreamReceiver
 import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Component
 class SnippetFormattedConsumer @Autowired constructor(
-    redis: ReactiveRedisTemplate<String, String>,
-    @Value("\${stream.key}") val streamKey: String,
-    @Value("\${groups.product}") val groupId: String
+    redis: RedisTemplate<String, String>,
+    @Value("\${stream.key}") streamKey: String,
+    @Value("\${groups.product}") groupId: String
 ): RedisStreamConsumer<FormatProduct>(streamKey, groupId, redis) {
     override fun options(): StreamReceiver.StreamReceiverOptions<String, ObjectRecord<String, FormatProduct>> {
         return StreamReceiver.StreamReceiverOptions.builder()
