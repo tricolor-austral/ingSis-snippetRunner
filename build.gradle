@@ -3,9 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	id 'org.springframework.boot' version '2.7.0'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'org.jetbrains.kotlin.jvm' version '1.7.22'
-	id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
-	id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.22'
+	id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.0'
+	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.0'
 }
 group = 'tricolor'
 version = '0.0.1-SNAPSHOT'
@@ -16,8 +16,9 @@ repositories {
 		name = "GitHubPackages"
 		url = uri("https://maven.pkg.github.com/marcocastagnaro/IngSis")
 		credentials {
-			username ="marcocastagnaro"
-			password = "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"
+			username = "marcocastagnaro"
+			password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+			println(password)
 		}
 	}
 }
@@ -28,21 +29,20 @@ dependencies {
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-
 	implementation 'ingsis:interpreter:1.1.5-SNAPSHOT'
 	implementation 'ingsis:parser:1.1.4-SNAPSHOT'
 	implementation 'ingsis:ast:1.1.1-SNAPSHOT'
 	implementation 'ingsis:token:1.1.2-SNAPSHOT'
 	implementation 'ingsis:lexer:1.1.5-SNAPSHOT'
 	implementation 'ingsis:formatter:1.1.1-SNAPSHOT'
-	implementation 'ingsis:staticcodeeanalyzer:1.1.1-SNAPSHOT'
-	implementation 'ingsis:execute:1.1.0-SNAPSHOT'
+	implementation 'ingsis:staticcodeeanalyzer:1.1.2-SNAPSHOT'
+	implementation 'ingsis:execute:1.1.2-SNAPSHOT'
 }
 
 tasks.withType(KotlinCompile) {
 	kotlinOptions {
-		freeCompilerArgs = ['-Xjsr305=strict']
-		jvmTarget = '17'
+		freeCompilerArgs = ['-Xjsr305=strict', '-Xskip-metadata-version-check']
+		jvmTarget = '11'
 	}
 }
 

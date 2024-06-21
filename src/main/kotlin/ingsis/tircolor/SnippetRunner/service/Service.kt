@@ -7,6 +7,6 @@ import java.io.InputStream
 interface Service {
     fun runScript(input: InputStream, version: String): Output
     fun runLinter(input: InputStream, version: String): Output
-    fun format(input: InputStream, version: String): Output
+    fun format(input: InputStream, version: String, configPath: String): Output
 
 }

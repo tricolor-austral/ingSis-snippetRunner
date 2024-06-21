@@ -1,5 +1,6 @@
 package ingsis.tircolor.SnippetRunner.controller
 
+import ingsis.tircolor.SnippetRunner.model.dto.SnippetFormatDto
 import ingsis.tircolor.SnippetRunner.model.dto.SnippetRunnerDTO
 import ingsis.tircolor.SnippetRunner.service.SnippetService
 import org.example.Output
@@ -19,7 +20,11 @@ class SnippetController(private val snippetService : SnippetService) {
         val output: Output = languageService.runScript(snippetRunnerDTO.input , snippetRunnerDTO.version)
         return ResponseEntity(output.string, HttpStatus.OK)
     }
-    fun formatSnippet(language: String, script: InputStream, version: String){
+    @PostMapping("/format")
+    fun formatSnippet(@RequestBody snippetRunnerDTO: SnippetFormatDto): ResponseEntity<String>{
+        val languageService = snippetService.selectService(snippetRunnerDTO.language)
+        val output = languageService.format(snippetRunnerDTO.input, snippetRunnerDTO.version, snippetRunnerDTO.configPath)
+        return ResponseEntity(output.string, HttpStatus.OK)
 
     }
     fun runLinter (language: String, script: InputStream, version: String){

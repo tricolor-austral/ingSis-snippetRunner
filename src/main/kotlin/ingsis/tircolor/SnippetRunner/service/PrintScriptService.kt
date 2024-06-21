@@ -5,6 +5,7 @@ import org.example.Output
 import java.io.InputStream
 import org.example.parser.Parser
 import org.example.executer.Executer
+import org.example.executer.FormatterExecuter
 import org.example.splittingStrategy.StrategyMapper
 
 class PrintScriptService : Service {
@@ -17,8 +18,9 @@ class PrintScriptService : Service {
         TODO("Not yet implemented")
     }
 
-    override fun format(input: InputStream, version: String): Output {
-        TODO("Not yet implemented")
+    override fun format(input: InputStream, version: String, configPath: String): Output {
+        val formatter = FormatterExecuter()
+        return formatter.execute(input, version, configPath)
     }
 
 }
