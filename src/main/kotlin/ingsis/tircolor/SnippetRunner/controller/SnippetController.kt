@@ -15,8 +15,8 @@ import java.io.InputStream
 class SnippetController(private val snippetService : SnippetService) {
     @PostMapping("/run")
     fun runSnippet(@RequestHeader ("Authorization") token: String ,@RequestBody snippetRunnerDTO: SnippetRunnerDTO) : ResponseEntity<String> {
-        val languageService = snippetService.selectService(snippetRunnerDTO.language).runScript(snippetRunnerDTO.input, snippetRunnerDTO.version)
-        val output: Output = languageService.run { snippetRunnerDTO.input }
+        val languageService = snippetService.selectService(snippetRunnerDTO.language)
+        val output: Output = languageService.runScript(snippetRunnerDTO.input , snippetRunnerDTO.version)
         return ResponseEntity(output.string, HttpStatus.OK)
     }
     fun formatSnippet(language: String, script: InputStream, version: String){
