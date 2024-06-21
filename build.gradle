@@ -9,6 +9,7 @@ plugins {
 }
 group = 'tricolor'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '21'
 
 repositories {
 	mavenCentral()
@@ -41,8 +42,7 @@ dependencies {
 
 tasks.withType(KotlinCompile) {
 	kotlinOptions {
-		freeCompilerArgs = ['-Xjsr305=strict']
-		jvmTarget = '17'
+		jvmTarget = '21'
 	}
 }
 
