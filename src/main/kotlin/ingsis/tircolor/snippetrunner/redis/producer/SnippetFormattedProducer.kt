@@ -1,7 +1,6 @@
 package ingsis.tircolor.snippetrunner.redis.producer
 
 import ingsis.tircolor.snippetrunner.redis.consumer.FormatProduct
-import jdk.jfr.internal.OldObjectSample.emit
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.redis.core.RedisTemplate
