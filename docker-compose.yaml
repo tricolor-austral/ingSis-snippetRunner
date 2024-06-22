@@ -2,7 +2,7 @@ version: '3'
 
 services:
   api:
-    container_name: "compose-api"
+    container_name: "runner-api"
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,9 +14,12 @@ services:
       DB_NAME: ${POSTGRES_DB}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
+    depends_on:
+      - db
+      - redis
 
   db:
-    container_name: postgres_db
+    container_name: "runner-db"
     image: postgres:12
     ports:
       - 5432:5432

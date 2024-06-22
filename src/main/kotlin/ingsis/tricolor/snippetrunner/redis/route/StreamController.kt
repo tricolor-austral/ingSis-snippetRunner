@@ -17,6 +17,7 @@ class StreamController
         fun createFormatSnippetEvent(
             @RequestBody snippet: FormatProduct,
         ): String {
+            println("request has been received")
             producer.publishEvent(snippet)
             return "Event to format snippet created"
         }

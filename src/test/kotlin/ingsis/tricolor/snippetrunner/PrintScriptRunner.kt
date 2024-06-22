@@ -28,7 +28,7 @@ class PrintscriptExecutorTest {
         val input = FileInputStream(inputFile)
 
         val result = executor.runScript(input, "1.1")
-        assertEquals("Hello, World!", result.string)
+        assertEquals("Hello, World!\n", result.string)
     }
 
     @Test
