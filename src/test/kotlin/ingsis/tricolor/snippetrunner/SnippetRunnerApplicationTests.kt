@@ -1,13 +1,11 @@
-package ingsis.tircolor.SnippetRunner
+package ingsis.tricolor.snippetrunner
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class SnippetRunnerApplicationTests {
-
-	@Test
-	fun contextLoads() {
-	}
-
+    @Test
+    fun contextLoads() {
+    }
 }

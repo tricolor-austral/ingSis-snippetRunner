@@ -1,6 +1,8 @@
-package ingsis.tircolor.SnippetRunner
+@file:Suppress("ktlint:standard:filename")
 
-import ingsis.tircolor.SnippetRunner.service.PrintScriptService
+package ingsis.tricolor.snippetrunner
+
+import ingsis.tricolor.snippetrunner.service.PrintScriptService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -28,20 +30,23 @@ class PrintscriptExecutorTest {
         val result = executor.runScript(input, "1.1")
         assertEquals("Hello, World!", result.string)
     }
+
     @Test
-    fun `003 test long file`(){
+    fun `003 test long file`() {
         val inputFile = File("$fileFounder/test002.txt")
         val input = FileInputStream(inputFile)
 
         val result = executor.runScript(input, "1.1")
         assertEquals("hello world\n10\noutside of conditional\n", result.string)
     }
+
     @Test
-    fun `004 test linter with my rules` (){
+    fun `004 test linter with my rules`() {
         val inputFile = File("$fileFounder/test003.txt")
         val configjson = "$ruleFounder/MyRules.json"
         val input = FileInputStream(inputFile)
         val result = executor.runLinter(input, "1.1", configjson)
         val brokenRules: MutableList<String> = result.flatMap { it.getBrokenRules() }.toMutableList()
-        assertEquals("Println must not be called with an expression at line 0", brokenRules.joinToString("\n"))    }
+        assertEquals("Println must not be called with an expression at line 0", brokenRules.joinToString("\n"))
+    }
 }
