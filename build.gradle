@@ -32,7 +32,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
 
 	implementation 'ingsis:interpreter:1.1.5-SNAPSHOT'
 	implementation 'ingsis:parser:1.1.4-SNAPSHOT'

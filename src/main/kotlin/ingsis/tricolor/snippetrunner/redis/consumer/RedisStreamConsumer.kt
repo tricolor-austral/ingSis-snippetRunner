@@ -1,21 +1,19 @@
 package ingsis.tricolor.snippetrunner.redis.consumer
 
 import jakarta.annotation.PostConstruct
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
+import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.runBlocking
 import org.springframework.data.redis.connection.stream.Consumer
 import org.springframework.data.redis.connection.stream.ObjectRecord
 import org.springframework.data.redis.connection.stream.ReadOffset
 import org.springframework.data.redis.connection.stream.StreamOffset
-import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.data.redis.stream.StreamReceiver
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.net.InetAddress
 
-abstract class RedisStreamConsumer<Value>(
-    protected val streamKey: String,
-    protected val groupId: String,
-    private val redis: RedisTemplate<String, String>,
-) {
+abstract class RedisStreamConsumer<Value>(protected val streamKey: String, protected val groupId: String, private val redis: ReactiveRedisTemplate<String, String>) {
     protected abstract fun onMessage(record: ObjectRecord<String, Value>)
 
     private lateinit var flow: Flux<ObjectRecord<String, Value>>
@@ -26,21 +24,23 @@ abstract class RedisStreamConsumer<Value>(
     fun subscription() {
         val options = options()
 
-        try {
-            val consumerGroupExists = consumerGroupExists(streamKey, groupId)
-            if (!consumerGroupExists) {
-                println("Consumer group $groupId for stream $streamKey doesn't exist. Creating...")
-                createConsumerGroup(streamKey, groupId)
-            } else {
-                println("Consumer group $groupId for stream $streamKey exists!")
+        // Spring doesn't interact very well with reactivity in PostConstruct methods, it makes sense.
+        runBlocking {
+            try {
+                val consumerGroupExists = consumerGroupExists(streamKey, groupId).awaitSingle()
+                if (!consumerGroupExists) {
+                    println("Consumer group $groupId for stream $streamKey doesn't exist. Creating...")
+                    createConsumerGroup(streamKey, groupId).awaitSingle()
+                } else {
+                    println("Consumer group $groupId for stream $streamKey exists!")
+                }
+            } catch (e: Exception) {
+                println("Exception: $e")
+                println("Stream $streamKey doesn't exist. Creating stream $streamKey and group $groupId")
+                redis.opsForStream<Any, Any>().createGroup(streamKey, groupId).awaitSingle()
             }
-        } catch (e: Exception) {
-            println("Exception: $e")
-            println("Stream $streamKey doesn't exist. Creating stream $streamKey and group $groupId")
-            redis.opsForStream<Any, Any>().createGroup(streamKey, groupId)
         }
-        val factory = redis.connectionFactory as ReactiveRedisConnectionFactory
-        val container = StreamReceiver.create(factory, options)
+        val container = StreamReceiver.create(redis.connectionFactory, options)
         flow =
             container.receiveAutoAck(
                 Consumer.from(groupId, InetAddress.getLocalHost().hostName),
@@ -52,18 +52,14 @@ abstract class RedisStreamConsumer<Value>(
     private fun createConsumerGroup(
         streamKey: String,
         groupId: String,
-    ): String {
+    ): Mono<String> {
         return redis.opsForStream<Any, Any>().createGroup(streamKey, groupId)
     }
 
     private fun consumerGroupExists(
         stream: String,
         group: String,
-    ): Boolean {
-        val groups = redis.opsForStream<Any, Any>().groups(stream)
-        for (it in groups) {
-            if (it.groupName() == group) return true
-        }
-        return false
+    ): Mono<Boolean> {
+        return redis.opsForStream<Any, Any>().groups(stream).any { it.groupName() == group }
     }
 }

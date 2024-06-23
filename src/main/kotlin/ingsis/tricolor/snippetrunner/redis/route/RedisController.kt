@@ -1,4 +1,4 @@
-package ingsis.tricolor.snippetrunner.controller
+package ingsis.tricolor.snippetrunner.redis.route
 
 import ingsis.tricolor.snippetrunner.redis.consumer.FormatProduct
 import ingsis.tricolor.snippetrunner.redis.producer.SnippetFormattedProducer
@@ -14,7 +14,7 @@ class RedisController
     @Autowired
     constructor(private val producer: SnippetFormattedProducer) {
         @PostMapping("/format/snippet")
-        fun createFormatSnippetEvent(
+        suspend fun createFormatSnippetEvent(
             @RequestBody snippet: FormatProduct,
         ): String {
             println("request has been received")
