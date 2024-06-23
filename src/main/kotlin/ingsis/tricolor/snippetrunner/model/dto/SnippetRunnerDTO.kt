@@ -4,8 +4,9 @@ import java.io.InputStream
 import java.util.*
 
 data class SnippetRunnerDTO(
+    val correlationId: UUID,
     val snippetId: UUID,
     val language: String,
     val version: String,
-    val input: InputStream,
+    val input: String,
 )
