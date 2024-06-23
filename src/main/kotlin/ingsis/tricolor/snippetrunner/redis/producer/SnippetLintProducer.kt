@@ -8,10 +8,10 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
-class SnippetFormattedProducer
+class SnippetLintProducer
     @Autowired
     constructor(
-        @Value("\${stream.key.format}") streamKey: String,
+        @Value("\${stream.key.lint}") streamKey: String,
         redis: ReactiveRedisTemplate<String, String>,
     ) : RedisStreamProducer(streamKey, redis) {
         suspend fun publishEvent(snippet: Snippet) {

@@ -1,6 +1,5 @@
 package ingsis.tricolor.snippetrunner.service
 
-import ingsis.tricolor.snippetrunner.redis.consumer.FormatProduct
 import ingsis.tricolor.snippetrunner.redis.dto.Snippet
 import ingsis.tricolor.snippetrunner.service.interfaces.RedisService
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,19 +16,15 @@ class DefaultRedisService
     ) : RedisService {
         val operationsApi = WebClient.builder().baseUrl("http://$permissionUrl").build()
 
-        override fun formatSnippet(snippet: FormatProduct): Snippet {
+        override fun formatSnippet(snippet: Snippet): Snippet {
             // TODO: tengo que formatear el snippet y mandarselo a el operations (snippetholder) para que lo guarde
-//            val stream = ByteArrayInputStream(snippet.snippet.toByteArray(Charsets.UTF_8))
-//            val formattedSnippet = snippetService.format(stream, "1.1", "Aca le pasaria las reglas en ves del path")
-//            val bodyValue = Snippet(snippet.id, formattedSnippet.toString())
-            val bodyValue = Snippet(snippet.id, snippet.snippet)
-//            operationsApi.post()
-//                .uri("/update-snippet-runner")
-//                .bodyValue(bodyValue)
-//                .retrieve()
-//                .bodyToMono(String::class.java)
-//                .block() ?: throw RuntimeException("Couldn't save snippet")
+            println("Estoy formateando un snippet")
+            return snippet
+        }
 
-            return bodyValue
+        override fun lintSnippet(snippet: Snippet): Snippet {
+            // TODO: tengo que lintear el snippet y mandarselo a el operations (snippetholder) para que lo guarde
+            println("Estoy linteando un snippet")
+            return snippet
         }
     }
