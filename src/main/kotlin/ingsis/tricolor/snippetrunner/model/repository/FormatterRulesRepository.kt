@@ -1,0 +1,10 @@
+package ingsis.tricolor.snippetrunner.model.repository
+
+import ingsis.tricolor.snippetrunner.model.rules.FormatterRules
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
+
+interface FormatterRulesRepository : JpaRepository<FormatterRules, UUID>
+{
+
+}
