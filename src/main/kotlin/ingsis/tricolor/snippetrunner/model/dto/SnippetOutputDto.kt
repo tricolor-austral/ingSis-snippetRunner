@@ -1,9 +1,10 @@
 package ingsis.tricolor.snippetrunner.model.dto
 
-import java.util.*
+import java.util.UUID
 
-data class SnippetOutputDto (
+data class SnippetOutputDto(
     val snippet: String,
     val correlationId: UUID,
-    val snippetId: UUID
+            val snippetId: UUID
+
 )
