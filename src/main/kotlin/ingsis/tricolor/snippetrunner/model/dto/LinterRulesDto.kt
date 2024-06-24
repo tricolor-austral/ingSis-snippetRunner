@@ -1,8 +1,8 @@
 package ingsis.tricolor.snippetrunner.model.dto
 
-data class LinterRulesDto (
+data class LinterRulesDto(
     val userId: String,
     val identifier: String,
     val printwithoutexpresion: Boolean,
-    val readinputwithoutexpresion: Boolean
+    val readinputwithoutexpresion: Boolean,
 )

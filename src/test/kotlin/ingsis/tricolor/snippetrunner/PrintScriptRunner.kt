@@ -1,6 +1,5 @@
 import ingsis.tricolor.snippetrunner.model.dto.LinterRulesDto
 import ingsis.tricolor.snippetrunner.model.repository.LinterRulesRepository
-import ingsis.tricolor.snippetrunner.model.rules.LinterRules
 import ingsis.tricolor.snippetrunner.model.service.FormatterRulesService
 import ingsis.tricolor.snippetrunner.model.service.LinterRulesService
 import ingsis.tricolor.snippetrunner.service.PrintScriptService
@@ -10,8 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -19,12 +16,11 @@ import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class PrintscriptExecutorTest {
-
     @Mock
     lateinit var formatterService: FormatterRulesService
+
     @Mock
     lateinit var linterService: LinterRulesService
-
 
     @Mock
     lateinit var linterRulesRepository: LinterRulesRepository
@@ -63,7 +59,6 @@ class PrintscriptExecutorTest {
         val correlationId = UUID.randomUUID()
         val userId = "1"
         val linterRules = LinterRulesDto(userId, "camelcase", true, true)
-
 
         val returnDto = linterService.updateLinterRules(linterRules, userId)
         assertEquals(linterRules, returnDto)

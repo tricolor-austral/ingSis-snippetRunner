@@ -43,7 +43,13 @@ class SnippetController(
     ): ResponseEntity<SnippetOutputDto> {
         val languageService = snippetService.selectService(snippetRunnerDTO.language)
         val inputStream = ByteArrayInputStream(snippetRunnerDTO.input.toByteArray())
-        val output = languageService.runLinter(inputStream, snippetRunnerDTO.version, snippetRunnerDTO.userId, snippetRunnerDTO.correlationId)
+        val output =
+            languageService.runLinter(
+                inputStream,
+                snippetRunnerDTO.version,
+                snippetRunnerDTO.userId,
+                snippetRunnerDTO.correlationId,
+            )
         val brokenRules: MutableList<String> = output.flatMap { it.getBrokenRules() }.toMutableList()
         val snippetOutput = SnippetOutputDto(brokenRules.joinToString("\n"), snippetRunnerDTO.correlationId, snippetRunnerDTO.snippetId)
         return ResponseEntity(snippetOutput, HttpStatus.OK)

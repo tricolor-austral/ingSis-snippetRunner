@@ -15,13 +15,13 @@ interface Service {
         input: InputStream,
         version: String,
         userId: String,
-            correlationId: UUID
+        correlationId: UUID,
     ): MutableList<SCAOutput>
 
     fun format(
         input: InputStream,
         version: String,
         userId: String,
-        correlationId: UUID
+        correlationId: UUID,
     ): Output
 }
