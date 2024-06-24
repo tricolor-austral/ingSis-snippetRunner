@@ -8,7 +8,7 @@ class FormatterRules(
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     var id: UUID = UUID.randomUUID(),
-    @Column(name = "userId")
+    @Column(name = "userId", unique = true)
     val userId: String? = null,
     @Column(name = "NewLinesBeforePrintln")
     var NewLinesBeforePrintln: Int = 0,

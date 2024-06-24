@@ -44,7 +44,7 @@ class RedisController
             formatterService.updateFormatterRules(formatterDto, data.userId)
 
             data.snippets.forEach {
-                val snippet = Snippet(data.userId, it.input, data.correlationId)
+                val snippet = Snippet(it.snippetId, it.input, data.userId, data.correlationId)
                 formatProducer.publishEvent(snippet)
             }
         }
@@ -66,7 +66,7 @@ class RedisController
                 )
             linterRulesService.updateLinterRules(linterDto, data.userId)
             data.snippets.map {
-                val snippet = Snippet(data.userId, it.input, data.correlationId)
+                val snippet = Snippet(it.snippetId, it.input, data.userId, data.correlationId)
                 lintProducer.publishEvent(snippet)
             }
         }

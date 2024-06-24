@@ -15,7 +15,8 @@ class FormatterRulesService(
         userId: String,
         correlationId: UUID,
     ): FormatterRules {
-        return formatterRulesRepository.findByUserId(userId).orElse(throw java.lang.RuntimeException("Not found"))
+        println("userId: $userId")
+        return findOrCreateByUser(userId)
     }
 
     fun updateFormatterRules(
@@ -23,6 +24,7 @@ class FormatterRulesService(
         userId: String,
     ): FormatterRulesDto {
         try {
+            println("userId: $userId")
             val rules = findOrCreateByUser(userId)
             rules.NewLinesBeforePrintln = formatterRules.NewLinesBeforePrintln
             rules.SpacesInAssignation = formatterRules.SpacesInAssignation
@@ -42,7 +44,12 @@ class FormatterRulesService(
     }
 
     private fun findOrCreateByUser(userId: String): FormatterRules {
-        return formatterRulesRepository.findByUserId(userId).orElse(createUserById(userId))
+        val rules = formatterRulesRepository.findByUserId(userId).orElse(null)
+        if (rules == null) {
+            println("User not found")
+            return createUserById(userId)
+        }
+        return rules
     }
 
     private fun createUserById(userId: String): FormatterRules {
