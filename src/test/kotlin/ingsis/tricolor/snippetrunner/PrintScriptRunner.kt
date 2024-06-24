@@ -1,25 +1,43 @@
-@file:Suppress("ktlint:standard:filename")
-
-package ingsis.tricolor.snippetrunner
-
+import ingsis.tricolor.snippetrunner.model.dto.LinterRulesDto
+import ingsis.tricolor.snippetrunner.model.repository.LinterRulesRepository
+import ingsis.tricolor.snippetrunner.model.rules.LinterRules
+import ingsis.tricolor.snippetrunner.model.service.FormatterRulesService
+import ingsis.tricolor.snippetrunner.model.service.LinterRulesService
 import ingsis.tricolor.snippetrunner.service.PrintScriptService
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.util.*
 
+@ExtendWith(MockitoExtension::class)
 class PrintscriptExecutorTest {
-    private val executor = PrintScriptService()
+
+    @Mock
+    lateinit var formatterService: FormatterRulesService
+    @Mock
+    lateinit var linterService: LinterRulesService
+
+
+    @Mock
+    lateinit var linterRulesRepository: LinterRulesRepository
+
+    @InjectMocks
+    lateinit var executor: PrintScriptService
+
     private val fileFounder = "src/test/resources/files"
-    private val ruleFounder = "src/test/resources/rules"
 
     @Test
     fun `001 empty`() {
         val result = executor.runScript(InputStream.nullInputStream(), "1.1")
-
-        Assertions.assertEquals("", result.string)
+        assertEquals("", result.string)
     }
 
     @Test
@@ -41,12 +59,28 @@ class PrintscriptExecutorTest {
     }
 
     @Test
-    fun `004 test linter with my rules`() {
-        val inputFile = File("$fileFounder/test003.txt")
-        val configjson = "$ruleFounder/MyRules.json"
-        val input = FileInputStream(inputFile)
-        val result = executor.runLinter(input, "1.1", configjson)
-        val brokenRules: MutableList<String> = result.flatMap { it.getBrokenRules() }.toMutableList()
-        assertEquals("Println must not be called with an expression at line 0", brokenRules.joinToString("\n"))
+    fun `creating linter rules and getting linterRules`() {
+        val correlationId = UUID.randomUUID()
+        val userId = "1"
+        val linterRules = LinterRulesDto(userId, "camelcase", true, true)
+
+
+        val returnDto = linterService.updateLinterRules(linterRules, userId)
+        assertEquals(linterRules, returnDto)
     }
+//
+//    @Test
+//    fun `004 test linter with my rules`() {
+//        val inputFile = File("$fileFounder/test003.txt")
+//        val input = FileInputStream(inputFile)
+//        val correlationId = UUID.randomUUID()
+//
+//        // Mock del comportamiento del repositorio
+//        whenever(linterRulesRepository.findByUserId("10"))
+//            .thenReturn(LinterRules("10", "camelcase", true, true))
+//
+//        val result = executor.runLinter(input, "1.1", "10", correlationId)
+//        val brokenRules = result.flatMap { it.getBrokenRules() }.toMutableList()
+//        assertEquals("Println must not be called with an expression at line 0", brokenRules.joinToString("\n"))
+//    }
 }

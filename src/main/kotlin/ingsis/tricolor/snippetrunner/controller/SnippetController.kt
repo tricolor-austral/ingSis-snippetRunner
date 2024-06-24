@@ -1,21 +1,15 @@
 package ingsis.tricolor.snippetrunner.controller
 
-import OutputRulesDto
-import com.fasterxml.jackson.databind.ObjectMapper
 import ingsis.tricolor.snippetrunner.model.dto.SnippetOutputDto
 import ingsis.tricolor.snippetrunner.model.dto.SnippetRunnerDTO
 import ingsis.tricolor.snippetrunner.service.SnippetService
 import org.example.Output
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.io.ByteArrayInputStream
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.web.bind.annotation.PutMapping
-import java.io.File
 
 @RestController
 class SnippetController(

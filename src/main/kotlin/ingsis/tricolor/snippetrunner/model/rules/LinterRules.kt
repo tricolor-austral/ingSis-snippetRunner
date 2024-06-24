@@ -11,14 +11,14 @@ class LinterRules {
     var id: UUID? = null
 
     @Column(name = "userId")
-    val userId: String? = null
+    var userId: String? = null
 
     @Column(name = "identifier")
     var identifier: String = ""
 
     @Column(name = "printwithoutexpresion")
-    var printwithoutexpresion: String =""
+    var printwithoutexpresion: Boolean= false
 
     @Column(name = "readinputwithoutexpresion")
-    var readinputwithoutexpresion: String =""
+    var readinputwithoutexpresion: Boolean= false
 }

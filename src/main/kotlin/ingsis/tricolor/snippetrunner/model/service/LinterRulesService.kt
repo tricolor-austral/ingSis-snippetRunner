@@ -9,25 +9,38 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class LinterRulesService {
-    @Autowired
-    private var  linterRulesRepository: LinterRulesRepository
+class LinterRulesService(@Autowired private var  linterRulesRepository: LinterRulesRepository) {
 
-    constructor(linterRulesRepository: LinterRulesRepository) {
-        this.linterRulesRepository = linterRulesRepository
-    }
     fun getLinterRulesByUserId (userId: String, correlationId: UUID): LinterRules {
         return linterRulesRepository.findByUserId(userId)
     }
-    fun updateLinterRules(linterRules: LinterRules, userId: String) : LinterRulesDto {
+    fun updateLinterRules(linterRules: LinterRulesDto, userId: String): LinterRulesDto {
         try {
-            val rules = linterRulesRepository.findByUserId(userId)
+            var rules = linterRulesRepository.findByUserId(userId)
+
+            if (rules == null) {
+                // Si no se encuentra ninguna regla, creamos una nueva
+                rules = LinterRules()
+                rules.userId = userId
+            }
+
+            // Actualizamos los valores de las reglas con los nuevos valores
             rules.identifier = linterRules.identifier
             rules.printwithoutexpresion = linterRules.printwithoutexpresion
             rules.readinputwithoutexpresion = linterRules.readinputwithoutexpresion
-            return linterRulesRepository.save(rules) as LinterRulesDto
+
+            // Guardamos o actualizamos las reglas en la base de datos
+            val savedRules = linterRulesRepository.save(rules)
+
+            // Convertimos las reglas guardadas en DTO antes de devolverlas
+            return LinterRulesDto(
+                savedRules.userId ?: "",
+                savedRules.identifier,
+                savedRules.printwithoutexpresion,
+                savedRules.readinputwithoutexpresion
+            )
         } catch (e: Exception) {
-            return linterRulesRepository.save(LinterRules()) as LinterRulesDto
+            return LinterRulesDto("", "", false, false)
         }
     }
 }

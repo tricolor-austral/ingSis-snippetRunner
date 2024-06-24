@@ -8,14 +8,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class FormatterRulesService() {
-
-    @Autowired
-    private lateinit var  formatterRulesRepository: FormatterRulesRepository
-
-    constructor(formatterRulesRepository: FormatterRulesRepository) : this() {
-        this.formatterRulesRepository = formatterRulesRepository
-    }
+class FormatterRulesService(@Autowired private var  formatterRulesRepository: FormatterRulesRepository) {
     fun getFormatterRulesByUserId (userId: String, correlationId: UUID): FormatterRules {
         return formatterRulesRepository.findByUserId(userId)
     }
