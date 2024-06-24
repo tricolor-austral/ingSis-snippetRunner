@@ -1,13 +1,11 @@
-package ingsis.tricolor.snippetrunner.model.dto
+package ingsis.tricolor.snippetrunner.redis.dto
 
-import java.io.InputStream
 import java.util.*
 
-data class SnippetRunnerDTO(
+data class ExecutionDataDto(
     val correlationId: UUID,
     val snippetId: String,
     val language: String,
     val version: String,
     val input: String,
-    val userId: String,
 )

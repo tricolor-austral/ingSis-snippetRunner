@@ -9,17 +9,21 @@ class FormatterRules {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     var id: UUID? = null
-    @Column(name =  "active")
-    val active: Boolean = false
+
+    @Column(name = "userId")
+    val userId: String? = null
 
     @Column(name = "NewLinesBeforePrintln")
-    val NewLinesBeforePrintln: Int = 0
+    var NewLinesBeforePrintln: Int = 0
 
     @Column(name = "SpacesBeforeDeclaration")
-    val SpacesBeforeDeclaration: Boolean = false;
+    var SpacesBeforeDeclaration: Boolean = false;
 
     @Column(name = "SpacesAfterDeclaration")
-    val SpacesAfterDeclaration: Boolean = false;
+    var SpacesAfterDeclaration: Boolean = false;
+
+    @Column(name="SpacesInAssignation")
+    var SpacesInAssignation: Boolean = false;
 
 
 }

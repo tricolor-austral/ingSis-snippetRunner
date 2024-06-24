@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import java.io.ByteArrayInputStream
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.web.bind.annotation.PutMapping
 import java.io.File
 
 @RestController
@@ -37,8 +38,7 @@ class SnippetController(
     ): ResponseEntity<SnippetOutputDto> {
         val languageService = snippetService.selectService(snippetRunnerDTO.language)
         val inputStream = ByteArrayInputStream(snippetRunnerDTO.input.toByteArray())
-        val defaultPath = "/Users/usuario/Desktop/Austral/4-primer-cuatri/Ing-sistemas/ingSis-2/ingSis-snippetRunner/src/main/kotlin/ingsis/tricolor/snippetrunner/model/dto/formatterRules.json"
-        val output = languageService.format(inputStream, snippetRunnerDTO.version, defaultPath)
+        val output = languageService.format(inputStream, snippetRunnerDTO.version, snippetRunnerDTO.userId, snippetRunnerDTO.correlationId)
         val snippetOutput = SnippetOutputDto(output.string, snippetRunnerDTO.correlationId, snippetRunnerDTO.snippetId)
         return ResponseEntity(snippetOutput, HttpStatus.OK)
     }
@@ -49,8 +49,7 @@ class SnippetController(
     ): ResponseEntity<SnippetOutputDto> {
         val languageService = snippetService.selectService(snippetRunnerDTO.language)
         val inputStream = ByteArrayInputStream(snippetRunnerDTO.input.toByteArray())
-        val defaultConfigPath = "/Users/usuario/Desktop/Austral/4-primer-cuatri/Ing-sistemas/ingSis-2/ingSis-snippetRunner/src/main/kotlin/ingsis/tricolor/snippetrunner/model/dto/linterRules.json"
-        val output = languageService.runLinter(inputStream, snippetRunnerDTO.version, defaultConfigPath)
+        val output = languageService.runLinter(inputStream, snippetRunnerDTO.version, snippetRunnerDTO.userId, snippetRunnerDTO.correlationId)
         val brokenRules: MutableList<String> = output.flatMap { it.getBrokenRules() }.toMutableList()
         val snippetOutput = SnippetOutputDto(brokenRules.joinToString("\n"), snippetRunnerDTO.correlationId, snippetRunnerDTO.snippetId)
         return ResponseEntity(snippetOutput, HttpStatus.OK)

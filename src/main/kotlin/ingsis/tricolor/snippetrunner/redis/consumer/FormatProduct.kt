@@ -1,7 +1,7 @@
 package ingsis.tricolor.snippetrunner.redis.consumer
 
 data class FormatProduct(
-    val id: String,
+    val userId: String,
+    val snippetId: String,
     val snippet: String,
-    val rules: List<String>, // poner lo que vaya en la regla
 )

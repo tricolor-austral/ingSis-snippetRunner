@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Component
-class SnippetFormattedConsumer
+class SnippetLintConsumer
     @Autowired
     constructor(
         redis: ReactiveRedisTemplate<String, String>,
-        @Value("\${stream.key.format}") streamKey: String,
+        @Value("\${stream.key.lint}") streamKey: String,
         @Value("\${groups.product}") groupId: String,
         private val service: RedisService,
     ) : RedisStreamConsumer<Snippet>(streamKey, groupId, redis) {
@@ -29,6 +29,6 @@ class SnippetFormattedConsumer
         override fun onMessage(record: ObjectRecord<String, Snippet>) {
             Thread.sleep(100 * 10)
             println("Id: ${record.id}, Value: ${record.value}, Stream: ${record.stream}, Group: $groupId")
-            service.formatSnippet(record.value)
+            service.lintSnippet(record.value)
         }
     }

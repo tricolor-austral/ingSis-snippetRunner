@@ -5,6 +5,6 @@ import java.util.UUID
 data class SnippetOutputDto(
     val snippet: String,
     val correlationId: UUID,
-            val snippetId: UUID
+            val snippetId: String
 
 )

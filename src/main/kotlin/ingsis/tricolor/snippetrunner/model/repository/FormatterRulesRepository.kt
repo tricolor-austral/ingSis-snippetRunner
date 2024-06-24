@@ -6,5 +6,5 @@ import java.util.*
 
 interface FormatterRulesRepository : JpaRepository<FormatterRules, UUID>
 {
-
+    fun findByUserId(userId: String): FormatterRules
 }
