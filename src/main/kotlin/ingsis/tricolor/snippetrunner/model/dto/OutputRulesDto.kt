@@ -1,4 +1,5 @@
 
+
 data class OutputRulesDto(
-    val rules: List<String>
+    val rules: List<String>,
 )

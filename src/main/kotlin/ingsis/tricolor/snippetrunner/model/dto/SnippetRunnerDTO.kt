@@ -1,6 +1,5 @@
 package ingsis.tricolor.snippetrunner.model.dto
 
-import java.io.InputStream
 import java.util.*
 
 data class SnippetRunnerDTO(

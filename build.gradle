@@ -6,6 +6,8 @@ plugins {
 	id 'org.jetbrains.kotlin.jvm' version '1.9.23'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.23'
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.23'
+	id 'org.jlleitschuh.gradle.ktlint' version '12.1.0'
+
 }
 
 java {
@@ -39,6 +41,7 @@ dependencies {
 	implementation 'com.netflix.spectator:spectator-api:0.55.0'
 	implementation 'org.springframework:spring-aspects'
 	implementation 'io.projectreactor.kotlin:reactor-kotlin-extensions'
+	implementation("org.jlleitschuh.gradle:ktlint-gradle:12.1.0")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
