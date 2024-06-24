@@ -18,24 +18,21 @@ class DefaultRedisService
         val operationsApi = WebClient.builder().baseUrl("http://$permissionUrl").build()
 
         override fun formatSnippet(snippet: Snippet): Snippet {
-            val defaultPath =
-                "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/${snippet.userId}-formatterRules.json"
             val snippetFormateado =
                 snippetService.format(ByteArrayInputStream(snippet.content.toByteArray()), "1.1", snippet.userId, snippet.correlationID)
             println("Estoy formateando un snippet")
             val outputSnippet = Snippet(snippet.id, snippetFormateado.string, snippet.userId, snippet.correlationID)
+            println(snippetFormateado.string)
             return outputSnippet
         }
 
         override fun lintSnippet(snippet: Snippet): Snippet {
-            val defaultPath =
-                "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/${snippet.id}-linterRules.json"
             println("Estoy linteando un snippet")
             val snippetLinteado =
                 snippetService.runLinter(
                     ByteArrayInputStream(snippet.content.toByteArray()),
                     "1.1",
-                    defaultPath,
+                    snippet.userId,
                     snippet.correlationID,
                 )
             val brokenRules: MutableList<String> = snippetLinteado.flatMap { it.getBrokenRules() }.toMutableList()

@@ -1,7 +1,9 @@
 package ingsis.tricolor.snippetrunner.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import ingsis.tricolor.snippetrunner.model.dto.FormatFile
+import ingsis.tricolor.snippetrunner.model.dto.LintFile
 import ingsis.tricolor.snippetrunner.model.service.FormatterRulesService
 import ingsis.tricolor.snippetrunner.model.service.LinterRulesService
 import ingsis.tricolor.snippetrunner.service.interfaces.Service
@@ -22,6 +24,14 @@ class PrintScriptService
         private val formatterService: FormatterRulesService,
         private val linterRulesService: LinterRulesService,
     ) : Service {
+        companion object {
+            fun objectMapper(): ObjectMapper {
+                val mapper = ObjectMapper()
+                mapper.propertyNamingStrategy = PropertyNamingStrategies.UPPER_CAMEL_CASE
+                return mapper
+            }
+        }
+
         override fun runScript(
             input: InputStream,
             version: String,
@@ -36,12 +46,16 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): MutableList<SCAOutput> {
-            val objectMapper = jacksonObjectMapper()
-            val linterDto = linterRulesService.getLinterRulesByUserId(userId, correlationId)
-            val rulesFile = File("../model/files/$userId-linterRules.json")
-            objectMapper.writeValue(rulesFile, linterDto)
-
-            val defaultPath = "../model/files/$userId-linterRules.json"
+            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-linterRules.json"
+            val lintRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
+            val linterDto =
+                LintFile(
+                    lintRules.identifier,
+                    lintRules.printwithoutexpresion,
+                    lintRules.readinputwithoutexpresion,
+                )
+            val rulesFile = File(defaultPath)
+            objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
             return linter.execute(input, version, defaultPath)
         }
@@ -52,7 +66,7 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): Output {
-            val objectMapper = jacksonObjectMapper()
+            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json"
             val formatterRules = formatterService.getFormatterRulesByUserId(userId, correlationId)
             val formatterDto =
                 FormatFile(
@@ -61,14 +75,13 @@ class PrintScriptService
                     formatterRules.SpacesAfterDeclaration,
                     formatterRules.SpacesInAssignation,
                 )
-            val rulesFile = File("src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json")
-            objectMapper.writeValue(rulesFile, formatterDto)
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json"
+            val rulesFile = File(defaultPath)
+            objectMapper().writeValue(rulesFile, formatterDto)
             val formatter = FormatterExecuter()
             val output = formatter.execute(input, version, defaultPath)
-// //        if (rulesFile.exists()) {
-// //            rulesFile.delete()
-// //        }
+//            if (rulesFile.exists()) {
+//                rulesFile.delete()
+//            }
             return output
         }
     }
