@@ -23,31 +23,31 @@ class RedisController
         private val lintProducer: SnippetLintProducer,
         private val formatterService: FormatterRulesService,
         private val linterRulesService: LinterRulesService,
-
-        ) {
-    @PutMapping("format")
-    suspend fun changeAndFormatRules(
-        @RequestBody data: ChangeRulesDto,
     ) {
-        val newLinesBeforePrint = data.rules.find { it.name == "NewLinesBeforePrintln" }?.value as? Int ?: 0
-        val spaceBeforeDecl = data.rules.find { it.name == "SpacesBeforeDeclaration" }?.value as? Boolean ?: false
-        val spaceAfterDecl = data.rules.find { it.name == "SpacesAfterDeclaration" }?.value as? Boolean ?: false
-        val spaceAfterAssig = data.rules.find { it.name == "SpacesInAssignation" }?.value as? Boolean ?: false
+        @PutMapping("/format")
+        suspend fun changeAndFormatRules(
+            @RequestBody data: ChangeRulesDto,
+        ) {
+            val newLinesBeforePrint = data.rules.find { it.name == "NewLinesBeforePrintln" }?.value as? Int ?: 0
+            val spaceBeforeDecl = data.rules.find { it.name == "SpacesBeforeDeclaration" }?.value as? Boolean ?: false
+            val spaceAfterDecl = data.rules.find { it.name == "SpacesAfterDeclaration" }?.value as? Boolean ?: false
+            val spaceAfterAssig = data.rules.find { it.name == "SpacesInAssignation" }?.value as? Boolean ?: false
 
-        val formatterDto = FormatterRulesDto(
-            data.userId,
-            newLinesBeforePrint,
-            spaceBeforeDecl,
-            spaceAfterDecl,
-            spaceAfterAssig
-        )
-        formatterService.updateFormatterRules(formatterDto, data.userId)
+            val formatterDto =
+                FormatterRulesDto(
+                    data.userId,
+                    newLinesBeforePrint,
+                    spaceBeforeDecl,
+                    spaceAfterDecl,
+                    spaceAfterAssig,
+                )
+            formatterService.updateFormatterRules(formatterDto, data.userId)
 
-        data.snippets.forEach {
-            val snippet = Snippet(data.userId, it.input, data.correlationId)
-            formatProducer.publishEvent(snippet)
+            data.snippets.forEach {
+                val snippet = Snippet(data.userId, it.input, data.correlationId)
+                formatProducer.publishEvent(snippet)
+            }
         }
-    }
 
         @PutMapping("lint")
         suspend fun changeAndLintRules(
@@ -57,12 +57,13 @@ class RedisController
             val printWithoutExpresion = data.rules.find { it.name == "printwithoutexpresion" }?.value as? Boolean ?: false
             val readInputWithoutExpresion = data.rules.find { it.name == "readinputwithoutexpresion" }?.value as? Boolean ?: false
 
-            val linterDto = LinterRulesDto(
-                data.userId,
-                identifier,
-                printWithoutExpresion,
-                readInputWithoutExpresion
-            )
+            val linterDto =
+                LinterRulesDto(
+                    data.userId,
+                    identifier,
+                    printWithoutExpresion,
+                    readInputWithoutExpresion,
+                )
             linterRulesService.updateLinterRules(linterDto, data.userId)
             data.snippets.map {
                 val snippet = Snippet(data.userId, it.input, data.correlationId)

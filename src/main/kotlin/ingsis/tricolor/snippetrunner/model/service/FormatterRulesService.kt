@@ -8,21 +8,52 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class FormatterRulesService(@Autowired private var  formatterRulesRepository: FormatterRulesRepository) {
-    fun getFormatterRulesByUserId (userId: String, correlationId: UUID): FormatterRules {
-        return formatterRulesRepository.findByUserId(userId)
+class FormatterRulesService(
+    @Autowired private var formatterRulesRepository: FormatterRulesRepository,
+) {
+    fun getFormatterRulesByUserId(
+        userId: String,
+        correlationId: UUID,
+    ): FormatterRules {
+        return formatterRulesRepository.findByUserId(userId).orElse(throw java.lang.RuntimeException("Not found"))
     }
-    fun updateFormatterRules(formatterRules: FormatterRulesDto, userId: String) : FormatterRulesDto {
+
+    fun updateFormatterRules(
+        formatterRules: FormatterRulesDto,
+        userId: String,
+    ): FormatterRulesDto {
         try {
-            val rules = formatterRulesRepository.findByUserId(userId)
+            val rules = findOrCreateByUser(userId)
             rules.NewLinesBeforePrintln = formatterRules.NewLinesBeforePrintln
             rules.SpacesInAssignation = formatterRules.SpacesInAssignation
             rules.SpacesBeforeDeclaration = formatterRules.SpacesBeforeDeclaration
             rules.SpacesAfterDeclaration = formatterRules.SpacesAfterDeclaration
-            return formatterRulesRepository.save(rules) as FormatterRulesDto
+            formatterRulesRepository.save(rules)
+            return FormatterRulesDto(
+                userId,
+                rules.NewLinesBeforePrintln,
+                rules.SpacesInAssignation,
+                rules.SpacesBeforeDeclaration,
+                rules.SpacesAfterDeclaration,
+            )
+        } catch (e: Exception) {
+            throw RuntimeException("Could not save rules")
         }
-        catch (e: Exception){
-            return formatterRulesRepository.save(FormatterRules()) as FormatterRulesDto
-        }
+    }
+
+    private fun findOrCreateByUser(userId: String): FormatterRules {
+        return formatterRulesRepository.findByUserId(userId).orElse(createUserById(userId))
+    }
+
+    private fun createUserById(userId: String): FormatterRules {
+        val format =
+            FormatterRules(
+                userId = userId,
+                NewLinesBeforePrintln = 0,
+                SpacesBeforeDeclaration = false,
+                SpacesAfterDeclaration = false,
+                SpacesInAssignation = false,
+            )
+        return formatterRulesRepository.save(format)
     }
 }
