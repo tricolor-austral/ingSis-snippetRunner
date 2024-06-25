@@ -44,5 +44,5 @@ jobs:
             cd ingSis-microservices
             sudo docker stop snippet-runner-api
             sudo docker compose -f docker-compose.dev.yml up -d snippet-runner-api
-        env:
-          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    env:
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
