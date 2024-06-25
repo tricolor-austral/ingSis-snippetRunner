@@ -1,11 +1,10 @@
 package ingsis.tricolor.snippetrunner.model.service
-
 import ingsis.tricolor.snippetrunner.model.dto.LinterRulesDto
 import ingsis.tricolor.snippetrunner.model.repository.LinterRulesRepository
 import ingsis.tricolor.snippetrunner.model.rules.LinterRules
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 class LinterRulesService(
@@ -24,12 +23,6 @@ class LinterRulesService(
     ): LinterRulesDto {
         try {
             var rules = findOrCreateByUser(userId)
-
-            if (rules == null) {
-                // Si no se encuentra ninguna regla, creamos una nueva
-                rules = LinterRules()
-                rules.userId = userId
-            }
 
             // Actualizamos los valores de las reglas con los nuevos valores
             rules.identifier = linterRules.identifier

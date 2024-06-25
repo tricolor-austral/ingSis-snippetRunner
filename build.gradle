@@ -41,7 +41,6 @@ dependencies {
 	implementation 'com.netflix.spectator:spectator-api:0.55.0'
 	implementation 'org.springframework:spring-aspects'
 	implementation 'io.projectreactor.kotlin:reactor-kotlin-extensions'
-	implementation("org.jlleitschuh.gradle:ktlint-gradle:12.1.0")
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'

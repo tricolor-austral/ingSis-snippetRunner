@@ -5,7 +5,7 @@ import ingsis.tricolor.snippetrunner.model.repository.FormatterRulesRepository
 import ingsis.tricolor.snippetrunner.model.rules.FormatterRules
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 
 @Service
 class FormatterRulesService(

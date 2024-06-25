@@ -1,6 +1,6 @@
 package ingsis.tricolor.snippetrunner.redis.dto
 
-import java.util.*
+import java.util.UUID
 
 data class ChangeRulesDto(
     val userId: String,

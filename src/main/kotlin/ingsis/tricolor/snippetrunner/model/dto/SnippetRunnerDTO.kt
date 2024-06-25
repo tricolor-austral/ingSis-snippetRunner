@@ -1,6 +1,6 @@
 package ingsis.tricolor.snippetrunner.model.dto
 
-import java.util.*
+import java.util.UUID
 
 data class SnippetRunnerDTO(
     val correlationId: UUID,

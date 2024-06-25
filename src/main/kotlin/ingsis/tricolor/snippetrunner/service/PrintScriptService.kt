@@ -15,7 +15,7 @@ import org.example.staticCodeeAnalyzer.SCAOutput
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.File
 import java.io.InputStream
-import java.util.*
+import java.util.UUID
 
 @org.springframework.stereotype.Service
 class PrintScriptService
