@@ -34,7 +34,6 @@ jobs:
             "TOKEN=${{ secrets.DOCKER_PACKAGES_SECRET }}"
 
           push: true
-
       - name: Refresh container
         uses: appleboy/ssh-action@master
         with:
@@ -43,5 +42,7 @@ jobs:
           key: ${{ secrets.INGSIS_DEV_KEY }}
           script: |
             cd ingSis-microservices
-            sudo docker stop operations-api
-            sudo docker compose -f docker-compose.dev.yml up -d operations-api
+            sudo docker stop snippet-runner-api
+            sudo docker compose -f docker-compose.dev.yml up -d snippet-runner-api
+        env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
