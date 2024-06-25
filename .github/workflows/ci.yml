@@ -18,8 +18,7 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
       - name: Build with Gradle
         run: |
           ./gradlew build
@@ -29,3 +28,6 @@ jobs:
             echo "Build failed"
             exit 1
           fi
+
+    env:
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
