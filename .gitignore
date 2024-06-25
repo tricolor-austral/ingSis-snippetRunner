@@ -1,5 +1,6 @@
 .env
 gradle.properties
+newrelic-java/newrelic/newrelic.yml
 
 HELP.md
 .gradle
