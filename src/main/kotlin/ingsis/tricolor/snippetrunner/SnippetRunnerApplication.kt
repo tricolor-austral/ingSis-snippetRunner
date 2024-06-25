@@ -1,4 +1,4 @@
-package ingsis.tircolor.SnippetRunner
+package ingsis.tricolor.snippetrunner
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class SnippetRunnerApplication
 
 fun main(args: Array<String>) {
-	runApplication<SnippetRunnerApplication>(*args)
+    runApplication<SnippetRunnerApplication>(*args)
 }

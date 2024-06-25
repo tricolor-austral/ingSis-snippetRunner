@@ -1,0 +1,10 @@
+println("hello world");
+let x:number =2;
+let y:number =3;
+x = 7;
+println(x+y);
+const booleanValue: boolean = false;
+if(booleanValue) {
+    println("if statement is not working correctly");
+}
+println("outside of conditional");
