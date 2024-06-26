@@ -386,15 +386,15 @@ common: &default_settings
 
 development:
   <<: *default_settings
-  app_name: 'ingSis-snippet-permissions (Development)'
+  app_name: 'ingSis-snippetRunner (Development)'
 
 test:
   <<: *default_settings
-  app_name: 'ingSis-snippet-permissions (Test)'
+  app_name: 'ingSis-snippetRunner (Test)'
 
 production:
   <<: *default_settings
 
 staging:
   <<: *default_settings
-  app_name: 'ingSis-snippet-permissions (Staging)'
+  app_name: 'ingSis-snippetRunner (Staging)'
