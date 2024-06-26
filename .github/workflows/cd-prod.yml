@@ -37,12 +37,15 @@ jobs:
       - name: Refresh container
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_PROD }}
           username: "tricolor-ingsis"
           key: ${{ secrets.INGSIS_PROD_KEY }}
           script: |
             cd ingSis-microservices
             sudo docker stop snippet-runner-api
             sudo docker compose -f docker-compose.dev.yml up -d snippet-runner-api
+            sudo docker stop reverse-proxy-dev
+            sudo docker compose -f docker-compose.dev.yml up -d reverse-proxy-dev
+
     env:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
