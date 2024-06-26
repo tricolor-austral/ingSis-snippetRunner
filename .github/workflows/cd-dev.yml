@@ -37,9 +37,9 @@ jobs:
       - name: Refresh container
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.HOST_PROD }}
           username: "tricolor-ingsis"
-          key: ${{ secrets.INGSIS_DEV_KEY }}
+          key: ${{ secrets.INGSIS_DEV_KEY_PROD }}
           script: |
             cd ingSis-microservices
             sudo docker stop snippet-runner-api
