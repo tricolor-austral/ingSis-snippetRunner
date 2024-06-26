@@ -1,4 +1,4 @@
-name: "Continuous Deployment - MASTER"
+name: "Continuous Deployment - PROD"
 on:
   push:
     branches:
