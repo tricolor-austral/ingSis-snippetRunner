@@ -1,20 +1,32 @@
 package ingsis.tricolor.snippetrunner.controller
 
+import OutputRulesDto
+import com.fasterxml.jackson.databind.ObjectMapper
 import ingsis.tricolor.snippetrunner.model.dto.SnippetOutputDto
 import ingsis.tricolor.snippetrunner.model.dto.SnippetRunnerDTO
+import ingsis.tricolor.snippetrunner.model.service.FormatterRulesService
+import ingsis.tricolor.snippetrunner.model.service.LinterRulesService
+import ingsis.tricolor.snippetrunner.redis.dto.Rule
 import ingsis.tricolor.snippetrunner.service.SnippetService
 import org.example.Output
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.util.*
 
 @RestController
 class SnippetController(
     private val snippetService: SnippetService,
-) {
+    private val linterRulesService: LinterRulesService,
+    private val formaterRulesService: FormatterRulesService
+    ) {
     @PostMapping("/run")
     fun runSnippet(
         @RequestBody snippetRunnerDTO: SnippetRunnerDTO,
@@ -54,32 +66,27 @@ class SnippetController(
         val snippetOutput = SnippetOutputDto(brokenRules.joinToString("\n"), snippetRunnerDTO.correlationId, snippetRunnerDTO.snippetId)
         return ResponseEntity(snippetOutput, HttpStatus.OK)
     }
-//    @GetMapping("/linterrules")
-//    fun getLinterRules(): ResponseEntity<OutputRulesDto> {
-//        val defaultConfigPath =
-//            "/Users/usuario/Desktop/Austral/4-primer-cuatri/Ing-sistemas/ingSis-2/ingSis-snippetRunner/src/main/kotlin/ingsis/tricolor/snippetrunner/model/dto/linterRules.json"
-//        val file = File(defaultConfigPath)
-//        val objectMapper = jacksonObjectMapper()
-//
-//        try {
-//            val linterRulesMap: Map<String, Boolean> = objectMapper.readValue(file)
-//            val rulesList = linterRulesMap.keys.toList()
-//            val linterRulesDto = OutputRulesDto(rules = rulesList)
-//            return ResponseEntity(linterRulesDto, HttpStatus.OK)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
-//        }
-//    }
-//    @GetMapping("/formatrules")
-//    fun getFormatterRules(): ResponseEntity<OutputRulesDto> {
-//        val defaultConfigPath =
-//            "/Users/usuario/Desktop/Austral/4-primer-cuatri/Ing-sistemas/ingSis-2/ingSis-snippetRunner/src/main/kotlin/ingsis/tricolor/snippetrunner/model/dto/formatterRules.json"
-//        val file = File(defaultConfigPath)
-//        val objectMapper = ObjectMapper()
-//        val linterRulesMap: Map<String, Any> = objectMapper.readValue(file, Map::class.java) as Map<String, Any>
-//        val rulesList = linterRulesMap.map { (key, value) -> key }
-//        val formatterRulesDto = OutputRulesDto(rules = rulesList)
-//        return ResponseEntity(formatterRulesDto, HttpStatus.OK)
-//    }
+    @GetMapping("/format/{userId}")
+    fun getLinterRules(@PathVariable userId: String, @RequestHeader("Correlation-id") correlationId: UUID): ResponseEntity<List<Rule>> {
+        val formatterRules = formaterRulesService.getFormatterRulesByUserId(userId, correlationId)
+        val rulesList = mutableListOf<Rule>()
+
+    rulesList.add(Rule(id = "1", name = "NewLinesBeforePrintln", isActive = true, value = formatterRules.NewLinesBeforePrintln))
+    rulesList.add(Rule(id = "2", name = "SpacesInAssignation", isActive = true, value = formatterRules.SpacesInAssignation))
+    rulesList.add(Rule(id = "3", name = "SpacesAfterDeclaration", isActive = true, value = formatterRules.SpacesAfterDeclaration))
+    rulesList.add(Rule(id = "4", name = "SpacesBeforeDeclaration", isActive = true, value = formatterRules.SpacesBeforeDeclaration))
+
+    return ResponseEntity.ok(rulesList)
+}
+    @GetMapping("/linter/{userId}")
+    fun getFormatterRules(@PathVariable userId: String, @RequestHeader("Correlation-id") correlationId: UUID): ResponseEntity<List<Rule>> {
+        val linterRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
+        val rulesList = mutableListOf<Rule>()
+
+        rulesList.add(Rule(id = "1", name = "identifier", isActive = true, value = linterRules.identifier))
+        rulesList.add(Rule(id = "2", name = "printwithoutexpresion", isActive = true, value = linterRules.printwithoutexpresion))
+        rulesList.add(Rule(id = "3", name = "readinputwithoutexpresion", isActive = true, value = linterRules.readinputwithoutexpresion))
+
+        return ResponseEntity.ok(rulesList)
+    }
 }
