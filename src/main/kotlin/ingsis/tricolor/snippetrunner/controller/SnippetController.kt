@@ -78,7 +78,7 @@ class SnippetController(
 
     return ResponseEntity.ok(rulesList)
 }
-    @GetMapping("/linter/{userId}")
+    @GetMapping("/lint/{userId}")
     fun getFormatterRules(@PathVariable userId: String, @RequestHeader("Correlation-id") correlationId: UUID): ResponseEntity<List<Rule>> {
         val linterRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
         val rulesList = mutableListOf<Rule>()
