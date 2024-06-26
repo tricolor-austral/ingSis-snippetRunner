@@ -31,7 +31,7 @@ jobs:
             ghcr.io/tricolor-austral/ingsis-snippetrunner-prod:latest
           build-args: |
             "USERNAME=${{ secrets.PUBLISH_USERNAME }}"
-            "TOKEN=${{ secrets.DOCKER_PACKAGES_SECRET }}"
+            "GIT_TOKEN=${{ secrets.DOCKER_PACKAGES_SECRET }}"
 
           push: true
       - name: Refresh container
