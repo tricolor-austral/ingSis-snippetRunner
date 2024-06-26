@@ -25,12 +25,12 @@ class DefaultRedisService
             val outputSnippet = Snippet(snippet.id, snippetFormateado.string, snippet.userId, snippet.correlationID)
             println(snippetFormateado.string)
             val returnBody = UpdatedSnippetDto(snippet.id.toLong(), snippetFormateado.string)
-            operationsApi.put()
-                .uri("/run/update-snippet")
-                .bodyValue(returnBody)
+            operationsApi.post()
+                .uri("/snippets/${snippet.id}")
+                .bodyValue(returnBody.content)
                 .retrieve()
                 .bodyToMono(Unit::class.java)
-                .block() ?: throw RuntimeException("Unauthorized to send to operations api")
+                .block() ?: throw RuntimeException("Could not save on asset service")
             return outputSnippet
         }
 
