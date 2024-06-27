@@ -126,7 +126,6 @@ class PrintScriptService
             if (rulesFile.exists()) {
                 rulesFile.delete()
             }
-            updateOnBucket(snippetId, output.string)
             return output
         }
 
