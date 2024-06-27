@@ -46,7 +46,7 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): MutableList<SCAOutput> {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-linterRules.json"
+            val defaultPath = "./$userId-linterRules.json"
             val lintRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
             val linterDto =
                 LintFile(
@@ -57,6 +57,9 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
             return linter.execute(input, version, defaultPath)
         }
 
@@ -66,7 +69,7 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): Output {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json"
+            val defaultPath = "./$userId-formatterRules.json"
             val formatterRules = formatterService.getFormatterRulesByUserId(userId, correlationId)
             val formatterDto =
                 FormatFile(
@@ -79,9 +82,9 @@ class PrintScriptService
             objectMapper().writeValue(rulesFile, formatterDto)
             val formatter = FormatterExecuter()
             val output = formatter.execute(input, version, defaultPath)
-//            if (rulesFile.exists()) {
-//                rulesFile.delete()
-//            }
+           if (rulesFile.exists()) {
+               rulesFile.delete()
+           }
             return output
         }
     }
