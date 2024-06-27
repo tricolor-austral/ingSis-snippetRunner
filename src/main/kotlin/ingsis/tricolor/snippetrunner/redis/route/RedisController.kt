@@ -28,6 +28,8 @@ class RedisController
         suspend fun changeAndFormatRules(
             @RequestBody data: ChangeRulesDto,
         ) {
+            println("changerulesdto: ${data.rules.forEach(::println)}")
+
             val newLinesBeforePrint = data.rules.find { it.name == "NewLinesBeforePrintln" }?.value as? Int ?: 0
             val spaceBeforeDecl = data.rules.find { it.name == "SpacesBeforeDeclaration" }?.value as? Boolean ?: false
             val spaceAfterDecl = data.rules.find { it.name == "SpacesAfterDeclaration" }?.value as? Boolean ?: false
@@ -41,12 +43,15 @@ class RedisController
                     spaceAfterDecl,
                     spaceAfterAssig,
                 )
-            formatterService.updateFormatterRules(formatterDto, data.userId)
+            println("formatterDto: userId=${formatterDto.userId}, newLinesBeforePrint=${formatterDto.NewLinesBeforePrintln}, spaceBeforeDecl=${formatterDto.SpacesBeforeDeclaration}, spaceAfterDecl=${formatterDto.SpacesAfterDeclaration}, spaceAfterAssig=${formatterDto.SpacesInAssignation}")
 
+            formatterService.updateFormatterRules(formatterDto, data.userId)
+            println("Rules updated")
             data.snippets.forEach {
                 val snippet = Snippet(it.snippetId, it.input, data.userId, data.correlationId)
                 formatProducer.publishEvent(snippet)
             }
+            println("Rules published")
         }
 
         @PutMapping("lint")
