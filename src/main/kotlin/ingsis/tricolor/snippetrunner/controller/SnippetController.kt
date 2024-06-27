@@ -4,9 +4,11 @@ import OutputRulesDto
 import com.fasterxml.jackson.databind.ObjectMapper
 import ingsis.tricolor.snippetrunner.model.dto.SnippetOutputDto
 import ingsis.tricolor.snippetrunner.model.dto.SnippetRunnerDTO
+import ingsis.tricolor.snippetrunner.model.dto.TestDto
 import ingsis.tricolor.snippetrunner.model.service.FormatterRulesService
 import ingsis.tricolor.snippetrunner.model.service.LinterRulesService
 import ingsis.tricolor.snippetrunner.redis.dto.Rule
+import ingsis.tricolor.snippetrunner.service.PrintScriptService
 import ingsis.tricolor.snippetrunner.service.SnippetService
 import org.example.Output
 import org.springframework.http.HttpStatus
@@ -88,5 +90,13 @@ class SnippetController(
         rulesList.add(Rule(id = "3", name = "readinputwithoutexpresion", isActive = true, value = linterRules.readinputwithoutexpresion))
 
         return ResponseEntity.ok(rulesList)
+    }
+    @PostMapping("/test")
+    fun makeTest (
+        @RequestBody testDto: TestDto,
+    ): ResponseEntity<String> {
+        val languageService = snippetService.selectService("PrintScript")
+        val result = languageService.test(testDto.input, testDto.output, testDto.snippet)
+        return ResponseEntity(result, HttpStatus.OK)
     }
 }

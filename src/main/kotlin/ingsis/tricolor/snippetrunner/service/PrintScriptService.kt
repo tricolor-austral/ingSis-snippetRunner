@@ -13,6 +13,7 @@ import org.example.executer.FormatterExecuter
 import org.example.executer.LinterExecuter
 import org.example.staticCodeeAnalyzer.SCAOutput
 import org.springframework.beans.factory.annotation.Autowired
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.util.UUID
@@ -38,6 +39,22 @@ class PrintScriptService
         ): Output {
             val executer = Executer()
             return executer.execute(input, version)
+        }
+        override fun test (
+            input : String,
+            output: List<String>,
+            snippet: String,
+        ): String {
+            val executer = Executer()
+            val inputStream = ByteArrayInputStream(snippet.toByteArray())
+            val value = executer.execute(inputStream, "1.1", input)
+            val result = value.string.split("\n")
+            for (i in 0 until output.size) {
+                if (result[i] != output[i]) {
+                    return "failure"
+                }
+            }
+            return "success"
         }
 
         override fun runLinter(
@@ -82,9 +99,9 @@ class PrintScriptService
             objectMapper().writeValue(rulesFile, formatterDto)
             val formatter = FormatterExecuter()
             val output = formatter.execute(input, version, defaultPath)
-           if (rulesFile.exists()) {
-               rulesFile.delete()
-           }
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
             return output
         }
     }

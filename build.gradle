@@ -49,8 +49,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
-
-
 	implementation 'ingsis:interpreter:1.1.5-SNAPSHOT'
 	implementation 'ingsis:parser:1.1.4-SNAPSHOT'
 	implementation 'ingsis:ast:1.1.1-SNAPSHOT'
@@ -58,7 +56,7 @@ dependencies {
 	implementation 'ingsis:lexer:1.1.5-SNAPSHOT'
 	implementation 'ingsis:formatter:1.1.1-SNAPSHOT'
 	implementation 'ingsis:staticcodeeanalyzer:1.1.2-SNAPSHOT'
-	implementation 'ingsis:execute:1.1.4-SNAPSHOT'
+	implementation 'ingsis:execute:1.1.6-SNAPSHOT'
 }
 
 tasks.withType(KotlinCompile) {
