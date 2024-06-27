@@ -13,6 +13,10 @@ import org.example.executer.FormatterExecuter
 import org.example.executer.LinterExecuter
 import org.example.staticCodeeAnalyzer.SCAOutput
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
@@ -24,6 +28,7 @@ class PrintScriptService
     constructor(
         private val formatterService: FormatterRulesService,
         private val linterRulesService: LinterRulesService,
+        @Value("\${permission.url}") private val permissionUrl: String,
     ) : Service {
         companion object {
             fun objectMapper(): ObjectMapper {
@@ -33,6 +38,8 @@ class PrintScriptService
             }
         }
 
+        val operationsApi = WebClient.builder().baseUrl("http://$permissionUrl/v1/asset").build()
+
         override fun runScript(
             input: InputStream,
             version: String,
@@ -40,8 +47,9 @@ class PrintScriptService
             val executer = Executer()
             return executer.execute(input, version)
         }
-        override fun test (
-            input : String,
+
+        override fun test(
+            input: String,
             output: List<String>,
             snippet: String,
         ): String {
@@ -83,6 +91,7 @@ class PrintScriptService
         }
 
         override fun format(
+            snippetId: String,
             input: InputStream,
             version: String,
             userId: String,
@@ -104,6 +113,26 @@ class PrintScriptService
             if (rulesFile.exists()) {
                 rulesFile.delete()
             }
+            updateOnBucket(snippetId, output.string)
             return output
+        }
+
+        fun updateOnBucket(
+            key: String,
+            content: String,
+        ) {
+            val responseStatus =
+                operationsApi
+                    .post()
+                    .uri("/snippets/{key}", key)
+                    .bodyValue(content)
+                    .exchangeToMono { clientResponse ->
+                        if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                            Mono.just(HttpStatus.CREATED)
+                        } else {
+                            Mono.just(HttpStatus.BAD_REQUEST)
+                        }
+                    }.block()
+            println(responseStatus)
         }
     }
