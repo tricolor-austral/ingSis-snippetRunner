@@ -48,6 +48,7 @@ class FormatterRulesService(
 
     private fun findOrCreateByUser(userId: String): FormatterRules {
         val rules = formatterRulesRepository.findByUserId(userId).orElse(null)
+        println("rules: $rules")
         if (rules == null) {
             println("User not found")
             return createUserById(userId)
