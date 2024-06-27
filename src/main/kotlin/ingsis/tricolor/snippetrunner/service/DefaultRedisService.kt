@@ -1,12 +1,13 @@
 package ingsis.tricolor.snippetrunner.service
 
-import ingsis.tricolor.snippetrunner.model.dto.UpdatedSnippetDto
 import ingsis.tricolor.snippetrunner.redis.dto.Snippet
 import ingsis.tricolor.snippetrunner.service.interfaces.RedisService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import java.io.ByteArrayInputStream
 
 @Service
@@ -24,13 +25,17 @@ class DefaultRedisService
             println("Estoy formateando un snippet")
             val outputSnippet = Snippet(snippet.id, snippetFormateado.string, snippet.userId, snippet.correlationID)
             println(snippetFormateado.string)
-            val returnBody = UpdatedSnippetDto(snippet.id.toLong(), snippetFormateado.string)
-            operationsApi.put()
-                .uri("/run/update-snippet")
-                .bodyValue(returnBody)
-                .retrieve()
-                .bodyToMono(Unit::class.java)
-                .block() ?: throw RuntimeException("Unauthorized to send to operations api")
+            operationsApi
+                .post()
+                .uri("/snippets/{key}", snippet.id)
+                .bodyValue(snippetFormateado.string)
+                .exchangeToMono { clientResponse ->
+                    if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                        Mono.just(HttpStatus.CREATED)
+                    } else {
+                        Mono.just(HttpStatus.BAD_REQUEST)
+                    }
+                }.block()
             return outputSnippet
         }
 
