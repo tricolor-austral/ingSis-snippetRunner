@@ -19,6 +19,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.FileWriter
 import java.io.InputStream
 import java.util.UUID
 
@@ -52,8 +53,20 @@ class PrintScriptService
             input: String,
             output: List<String>,
             snippet: String,
+            envVars:String
         ): String {
             val executer = Executer()
+            println(envVars)
+            val environment = envVars.split(",")
+            val envFile = File(".env")
+
+            FileWriter(envFile, true).use { writer ->
+                environment.forEach { envVar ->
+                    writer.appendLine(envVar)
+                }
+            }
+            println(envFile)
+
             val inputStream = ByteArrayInputStream(snippet.toByteArray())
             val value = executer.execute(inputStream, "1.1", input)
             val result = value.string.split("\n")

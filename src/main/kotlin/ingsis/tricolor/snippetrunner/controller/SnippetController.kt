@@ -108,7 +108,7 @@ class SnippetController(
         @RequestBody testDto: TestDto,
     ): ResponseEntity<String> {
         val languageService = snippetService.selectService("printscript")
-        val result = languageService.test(testDto.input, testDto.output, testDto.snippet)
+        val result = languageService.test(testDto.input, testDto.output, testDto.snippet, testDto.envVars)
         return ResponseEntity(result, HttpStatus.OK)
     }
 }

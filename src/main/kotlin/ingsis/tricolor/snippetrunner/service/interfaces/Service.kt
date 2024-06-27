@@ -30,5 +30,6 @@ interface Service {
         input: String,
         output: List<String>,
         snippet: String,
+        envVars: String
     ): String
 }
