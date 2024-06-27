@@ -24,4 +24,10 @@ interface Service {
         userId: String,
         correlationId: UUID,
     ): Output
+    fun test (
+        input: String,
+        output: List<String>,
+        snippet: String,
+    ): String
+
 }

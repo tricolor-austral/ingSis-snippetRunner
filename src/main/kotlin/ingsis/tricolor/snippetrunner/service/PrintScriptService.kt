@@ -13,6 +13,7 @@ import org.example.executer.FormatterExecuter
 import org.example.executer.LinterExecuter
 import org.example.staticCodeeAnalyzer.SCAOutput
 import org.springframework.beans.factory.annotation.Autowired
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
 import java.util.UUID
@@ -39,6 +40,22 @@ class PrintScriptService
             val executer = Executer()
             return executer.execute(input, version)
         }
+        override fun test (
+            input : String,
+            output: List<String>,
+            snippet: String,
+        ): String {
+            val executer = Executer()
+            val inputStream = ByteArrayInputStream(snippet.toByteArray())
+            val value = executer.execute(inputStream, "1.1", input)
+            val result = value.string.split("\n")
+            for (i in 0 until output.size) {
+                if (result[i] != output[i]) {
+                    return "failure"
+                }
+            }
+            return "success"
+        }
 
         override fun runLinter(
             input: InputStream,
@@ -46,7 +63,7 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): MutableList<SCAOutput> {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-linterRules.json"
+            val defaultPath = "./$userId-linterRules.json"
             val lintRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
             val linterDto =
                 LintFile(
@@ -57,7 +74,11 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
-            return linter.execute(input, version, defaultPath)
+            val output = linter.execute(input, version, defaultPath)
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
+            return output
         }
 
         override fun format(
@@ -66,8 +87,10 @@ class PrintScriptService
             userId: String,
             correlationId: UUID,
         ): Output {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json"
+            val defaultPath = "./$userId-formatterRules.json"
             val formatterRules = formatterService.getFormatterRulesByUserId(userId, correlationId)
+            println(formatterRules.NewLinesBeforePrintln)
+            println(formatterRules.SpacesAfterDeclaration)
             val formatterDto =
                 FormatFile(
                     formatterRules.NewLinesBeforePrintln,
@@ -79,9 +102,9 @@ class PrintScriptService
             objectMapper().writeValue(rulesFile, formatterDto)
             val formatter = FormatterExecuter()
             val output = formatter.execute(input, version, defaultPath)
-//            if (rulesFile.exists()) {
-//                rulesFile.delete()
-//            }
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
             return output
         }
     }
