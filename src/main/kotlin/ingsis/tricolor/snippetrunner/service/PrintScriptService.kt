@@ -49,6 +49,7 @@ class PrintScriptService
             val inputStream = ByteArrayInputStream(snippet.toByteArray())
             val value = executer.execute(inputStream, "1.1", input)
             val result = value.string.split("\n")
+            println("result: $result")
             for (i in 0 until output.size) {
                 if (result[i] != output[i]) {
                     return "failure"
