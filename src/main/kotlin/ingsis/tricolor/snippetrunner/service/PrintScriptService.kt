@@ -29,7 +29,7 @@ class PrintScriptService
     constructor(
         private val formatterService: FormatterRulesService,
         private val linterRulesService: LinterRulesService,
-        @Value("\${permission.url}") private val permissionUrl: String,
+        @Value("\${asset.url}") private val permissionUrl: String,
     ) : Service {
         companion object {
             fun objectMapper(): ObjectMapper {
@@ -39,7 +39,7 @@ class PrintScriptService
             }
         }
 
-        val operationsApi = WebClient.builder().baseUrl("http://$permissionUrl/v1/asset").build()
+        val assetServiceApi = WebClient.builder().baseUrl("http://$permissionUrl/v1/asset").build()
 
         override fun runScript(
             input: InputStream,
@@ -53,7 +53,7 @@ class PrintScriptService
             input: String,
             output: List<String>,
             snippet: String,
-            envVars:String
+            envVars: String,
         ): String {
             val executer = Executer()
             println(envVars)
@@ -134,8 +134,18 @@ class PrintScriptService
             key: String,
             content: String,
         ) {
+            assetServiceApi
+                .delete()
+                .uri("/snippets/{key}", key)
+                .exchangeToMono { clientResponse ->
+                    if (clientResponse.statusCode() == HttpStatus.NO_CONTENT) {
+                        Mono.just(HttpStatus.OK)
+                    } else {
+                        Mono.just(HttpStatus.BAD_REQUEST)
+                    }
+                }.block() ?: throw RuntimeException("Snippet does not exist on asset service")
             val responseStatus =
-                operationsApi
+                assetServiceApi
                     .post()
                     .uri("/snippets/{key}", key)
                     .bodyValue(content)
