@@ -74,11 +74,10 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
-            val output = linter.execute(input, version, defaultPath)
             if (rulesFile.exists()) {
                 rulesFile.delete()
             }
-            return output
+            return linter.execute(input, version, defaultPath)
         }
 
         override fun format(
@@ -89,8 +88,6 @@ class PrintScriptService
         ): Output {
             val defaultPath = "./$userId-formatterRules.json"
             val formatterRules = formatterService.getFormatterRulesByUserId(userId, correlationId)
-            println(formatterRules.NewLinesBeforePrintln)
-            println(formatterRules.SpacesAfterDeclaration)
             val formatterDto =
                 FormatFile(
                     formatterRules.NewLinesBeforePrintln,
