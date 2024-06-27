@@ -42,11 +42,12 @@ class RedisController
                     spaceAfterAssig,
                 )
             formatterService.updateFormatterRules(formatterDto, data.userId)
-
+            println("Rules updated")
             data.snippets.forEach {
                 val snippet = Snippet(it.snippetId, it.input, data.userId, data.correlationId)
                 formatProducer.publishEvent(snippet)
             }
+            println("Rules published")
         }
 
         @PutMapping("lint")

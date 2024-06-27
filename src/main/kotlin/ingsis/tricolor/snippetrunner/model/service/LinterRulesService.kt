@@ -24,15 +24,12 @@ class LinterRulesService(
         try {
             var rules = findOrCreateByUser(userId)
 
-            // Actualizamos los valores de las reglas con los nuevos valores
             rules.identifier = linterRules.identifier
             rules.printwithoutexpresion = linterRules.printwithoutexpresion
             rules.readinputwithoutexpresion = linterRules.readinputwithoutexpresion
 
-            // Guardamos o actualizamos las reglas en la base de datos
             val savedRules = linterRulesRepository.save(rules)
 
-            // Convertimos las reglas guardadas en DTO antes de devolverlas
             return LinterRulesDto(
                 savedRules.userId ?: "",
                 savedRules.identifier,
