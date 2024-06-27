@@ -7,7 +7,7 @@ import org.springframework.web.context.WebApplicationContext
 class SnippetService(private val applicationContext: WebApplicationContext) {
     fun selectService(language: String): ingsis.tricolor.snippetrunner.service.interfaces.Service {
         return when (language) {
-            "PrintScript" -> applicationContext.getBean(PrintScriptService::class.java)
+            "printscript" -> applicationContext.getBean(PrintScriptService::class.java)
             else -> throw IllegalArgumentException("Unsupported language: $language")
         }
     }

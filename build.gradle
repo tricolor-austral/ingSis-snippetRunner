@@ -8,7 +8,6 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.23'
 	id 'org.jlleitschuh.gradle.ktlint' version '12.1.0'
 
-
 }
 
 java {
@@ -31,6 +30,9 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation("io.github.cdimascio:java-dotenv:5.2.2")
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -47,9 +49,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-
-
 	implementation 'ingsis:interpreter:1.1.5-SNAPSHOT'
 	implementation 'ingsis:parser:1.1.4-SNAPSHOT'
 	implementation 'ingsis:ast:1.1.1-SNAPSHOT'
@@ -57,7 +56,7 @@ dependencies {
 	implementation 'ingsis:lexer:1.1.5-SNAPSHOT'
 	implementation 'ingsis:formatter:1.1.1-SNAPSHOT'
 	implementation 'ingsis:staticcodeeanalyzer:1.1.2-SNAPSHOT'
-	implementation 'ingsis:execute:1.1.4-SNAPSHOT'
+	implementation 'ingsis:execute:1.1.6-SNAPSHOT'
 }
 
 tasks.withType(KotlinCompile) {

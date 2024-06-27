@@ -19,9 +19,17 @@ interface Service {
     ): MutableList<SCAOutput>
 
     fun format(
+        snippetId: String,
         input: InputStream,
         version: String,
         userId: String,
         correlationId: UUID,
     ): Output
+
+    fun test(
+        input: String,
+        output: List<String>,
+        snippet: String,
+        envVars: String
+    ): String
 }

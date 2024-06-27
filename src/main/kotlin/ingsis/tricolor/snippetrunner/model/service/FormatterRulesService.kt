@@ -26,11 +26,14 @@ class FormatterRulesService(
         try {
             println("userId: $userId")
             val rules = findOrCreateByUser(userId)
+            print("old rules: ${rules}")
             rules.NewLinesBeforePrintln = formatterRules.NewLinesBeforePrintln
             rules.SpacesInAssignation = formatterRules.SpacesInAssignation
             rules.SpacesBeforeDeclaration = formatterRules.SpacesBeforeDeclaration
             rules.SpacesAfterDeclaration = formatterRules.SpacesAfterDeclaration
             formatterRulesRepository.save(rules)
+            println(rules)
+
             return FormatterRulesDto(
                 userId,
                 rules.NewLinesBeforePrintln,
@@ -45,6 +48,7 @@ class FormatterRulesService(
 
     private fun findOrCreateByUser(userId: String): FormatterRules {
         val rules = formatterRulesRepository.findByUserId(userId).orElse(null)
+        println("rules: $rules")
         if (rules == null) {
             println("User not found")
             return createUserById(userId)

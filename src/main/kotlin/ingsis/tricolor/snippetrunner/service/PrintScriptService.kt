@@ -13,7 +13,13 @@ import org.example.executer.FormatterExecuter
 import org.example.executer.LinterExecuter
 import org.example.staticCodeeAnalyzer.SCAOutput
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.FileWriter
 import java.io.InputStream
 import java.util.UUID
 
@@ -23,6 +29,7 @@ class PrintScriptService
     constructor(
         private val formatterService: FormatterRulesService,
         private val linterRulesService: LinterRulesService,
+        @Value("\${asset.url}") private val permissionUrl: String,
     ) : Service {
         companion object {
             fun objectMapper(): ObjectMapper {
@@ -32,6 +39,8 @@ class PrintScriptService
             }
         }
 
+        val assetServiceApi = WebClient.builder().baseUrl("http://$permissionUrl/v1/asset").build()
+
         override fun runScript(
             input: InputStream,
             version: String,
@@ -40,13 +49,44 @@ class PrintScriptService
             return executer.execute(input, version)
         }
 
+        override fun test(
+            input: String,
+            output: List<String>,
+            snippet: String,
+            envVars: String,
+        ): String {
+            val executer = Executer()
+            println(envVars)
+            val environment = envVars.split(",")
+            val envFile = File(".env")
+
+            FileWriter(envFile, true).use { writer ->
+                environment.forEach { envVar ->
+                    writer.appendLine(envVar)
+                }
+            }
+            println(envFile)
+
+            val inputStream = ByteArrayInputStream(snippet.toByteArray())
+            val value = executer.execute(inputStream, "1.1", input)
+            val result = value.string.split("\n")
+            println("result: $result")
+            println("expected output: $output")
+            for (i in 0 until output.size) {
+                if (result[i] != output[i]) {
+                    return "failure"
+                }
+            }
+            return "success"
+        }
+
         override fun runLinter(
             input: InputStream,
             version: String,
             userId: String,
             correlationId: UUID,
         ): MutableList<SCAOutput> {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-linterRules.json"
+            val defaultPath = "./$userId-linterRules.json"
             val lintRules = linterRulesService.getLinterRulesByUserId(userId, correlationId)
             val linterDto =
                 LintFile(
@@ -57,16 +97,20 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
             return linter.execute(input, version, defaultPath)
         }
 
         override fun format(
+            snippetId: String,
             input: InputStream,
             version: String,
             userId: String,
             correlationId: UUID,
         ): Output {
-            val defaultPath = "src/main/kotlin/ingsis/tricolor/snippetrunner/model/files/$userId-formatterRules.json"
+            val defaultPath = "./$userId-formatterRules.json"
             val formatterRules = formatterService.getFormatterRulesByUserId(userId, correlationId)
             val formatterDto =
                 FormatFile(
@@ -79,9 +123,39 @@ class PrintScriptService
             objectMapper().writeValue(rulesFile, formatterDto)
             val formatter = FormatterExecuter()
             val output = formatter.execute(input, version, defaultPath)
-//            if (rulesFile.exists()) {
-//                rulesFile.delete()
-//            }
+            if (rulesFile.exists()) {
+                rulesFile.delete()
+            }
+            updateOnBucket(snippetId, output.string)
             return output
+        }
+
+        fun updateOnBucket(
+            key: String,
+            content: String,
+        ) {
+            assetServiceApi
+                .delete()
+                .uri("/snippets/{key}", key)
+                .exchangeToMono { clientResponse ->
+                    if (clientResponse.statusCode() == HttpStatus.NO_CONTENT) {
+                        Mono.just(HttpStatus.OK)
+                    } else {
+                        Mono.just(HttpStatus.BAD_REQUEST)
+                    }
+                }.block() ?: throw RuntimeException("Snippet does not exist on asset service")
+            val responseStatus =
+                assetServiceApi
+                    .post()
+                    .uri("/snippets/{key}", key)
+                    .bodyValue(content)
+                    .exchangeToMono { clientResponse ->
+                        if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                            Mono.just(HttpStatus.CREATED)
+                        } else {
+                            Mono.just(HttpStatus.BAD_REQUEST)
+                        }
+                    }.block()
+            println(responseStatus)
         }
     }
