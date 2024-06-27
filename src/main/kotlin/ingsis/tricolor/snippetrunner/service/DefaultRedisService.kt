@@ -25,17 +25,19 @@ class DefaultRedisService
             println("Estoy formateando un snippet")
             val outputSnippet = Snippet(snippet.id, snippetFormateado.string, snippet.userId, snippet.correlationID)
             println(snippetFormateado.string)
-            operationsApi
-                .post()
-                .uri("/snippets/{key}", snippet.id)
-                .bodyValue(snippetFormateado.string)
-                .exchangeToMono { clientResponse ->
-                    if (clientResponse.statusCode() == HttpStatus.CREATED) {
-                        Mono.just(HttpStatus.CREATED)
-                    } else {
-                        Mono.just(HttpStatus.BAD_REQUEST)
-                    }
-                }.block()
+            val responseStatus =
+                operationsApi
+                    .post()
+                    .uri("/snippets/{key}", snippet.id)
+                    .bodyValue(snippetFormateado.string)
+                    .exchangeToMono { clientResponse ->
+                        if (clientResponse.statusCode() == HttpStatus.CREATED) {
+                            Mono.just(HttpStatus.CREATED)
+                        } else {
+                            Mono.just(HttpStatus.BAD_REQUEST)
+                        }
+                    }.block()
+            println(responseStatus)
             return outputSnippet
         }
 
