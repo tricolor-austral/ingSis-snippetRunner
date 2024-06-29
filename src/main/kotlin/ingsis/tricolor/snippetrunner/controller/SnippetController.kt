@@ -59,6 +59,8 @@ class SnippetController(
         @RequestBody snippetRunnerDTO: SnippetRunnerDTO,
     ): ResponseEntity<String> {
         val languageService = snippetService.selectService(snippetRunnerDTO.language)
+        println(snippetRunnerDTO.input)
+        println(snippetRunnerDTO.snippetId)
         val inputStream = ByteArrayInputStream(snippetRunnerDTO.input.toByteArray())
         val output =
             languageService.runLinter(
