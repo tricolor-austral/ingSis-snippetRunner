@@ -57,7 +57,7 @@ class SnippetController(
     @PostMapping("/lint")
     fun runLinter(
         @RequestBody snippetRunnerDTO: SnippetRunnerDTO,
-    ): ResponseEntity<SnippetOutputDto> {
+    ): ResponseEntity<String> {
         val languageService = snippetService.selectService(snippetRunnerDTO.language)
         val inputStream = ByteArrayInputStream(snippetRunnerDTO.input.toByteArray())
         val output =
@@ -68,8 +68,11 @@ class SnippetController(
                 snippetRunnerDTO.correlationId,
             )
         val brokenRules: MutableList<String> = output.flatMap { it.getBrokenRules() }.toMutableList()
-        val snippetOutput = SnippetOutputDto(brokenRules.joinToString("\n"), snippetRunnerDTO.correlationId, snippetRunnerDTO.snippetId)
-        return ResponseEntity(snippetOutput, HttpStatus.OK)
+        return if (brokenRules.size == 0) {
+            ResponseEntity("OK", HttpStatus.OK)
+        } else {
+            ResponseEntity("FAIL", HttpStatus.OK)
+        }
     }
 
     @GetMapping("/format/{userId}")
