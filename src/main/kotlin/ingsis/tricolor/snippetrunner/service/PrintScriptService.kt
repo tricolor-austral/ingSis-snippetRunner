@@ -97,10 +97,12 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
+            val output =  linter.execute(input, version, defaultPath)
+            println("llegue aca")
             if (rulesFile.exists()) {
                 rulesFile.delete()
             }
-            return linter.execute(input, version, defaultPath)
+            return output
         }
 
         override fun format(
