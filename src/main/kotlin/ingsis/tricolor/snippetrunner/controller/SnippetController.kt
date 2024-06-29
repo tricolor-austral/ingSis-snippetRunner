@@ -69,11 +69,13 @@ class SnippetController(
                 snippetRunnerDTO.userId,
                 snippetRunnerDTO.correlationId,
             )
+        println("output: $output")
         val brokenRules: MutableList<String> = output.flatMap { it.getBrokenRules() }.toMutableList()
+        println("brokenRules: $brokenRules")
         return if (brokenRules.size == 0) {
             ResponseEntity("OK", HttpStatus.OK)
         } else {
-            ResponseEntity("FAIL", HttpStatus.OK)
+            ResponseEntity(brokenRules.get(0), HttpStatus.OK)
         }
     }
 

@@ -56,7 +56,7 @@ dependencies {
 	implementation 'ingsis:lexer:1.1.5-SNAPSHOT'
 	implementation 'ingsis:formatter:1.1.1-SNAPSHOT'
 	implementation 'ingsis:staticcodeeanalyzer:1.1.2-SNAPSHOT'
-	implementation 'ingsis:execute:1.1.7-SNAPSHOT'
+	implementation 'ingsis:execute:1.1.8-SNAPSHOT'
 }
 
 tasks.withType(KotlinCompile) {

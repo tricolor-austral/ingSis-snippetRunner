@@ -105,7 +105,9 @@ class PrintScriptService
             val linter = LinterExecuter()
     try {
         val output = linter.execute(input, version, defaultPath)
-
+        output.forEach() {
+            println(it.getBrokenRules())
+        }
         println("llegue aca")
         if (rulesFile.exists()) {
             rulesFile.delete()
