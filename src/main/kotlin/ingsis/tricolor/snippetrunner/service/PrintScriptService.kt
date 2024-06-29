@@ -37,6 +37,10 @@ class PrintScriptService
                 mapper.propertyNamingStrategy = PropertyNamingStrategies.UPPER_CAMEL_CASE
                 return mapper
             }
+            fun linterObjectMapper(): ObjectMapper {
+                val mapper = ObjectMapper()
+                return mapper
+            }
         }
 
         val assetServiceApi = WebClient.builder().baseUrl("http://$permissionUrl/v1/asset").build()
@@ -95,7 +99,7 @@ class PrintScriptService
                     lintRules.readinputwithoutexpresion,
                 )
             val rulesFile = File(defaultPath)
-            objectMapper().writeValue(rulesFile, linterDto)
+            linterObjectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
             println(rulesFile.path)
             println(rulesFile.exists())
