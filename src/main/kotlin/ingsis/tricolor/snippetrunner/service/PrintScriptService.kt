@@ -97,6 +97,9 @@ class PrintScriptService
             val rulesFile = File(defaultPath)
             objectMapper().writeValue(rulesFile, linterDto)
             val linter = LinterExecuter()
+            println(rulesFile.path)
+            println(rulesFile.exists())
+            rulesFile.readLines().forEach { println(it) }
             val output =  linter.execute(input, version, defaultPath)
             println("llegue aca")
             if (rulesFile.exists()) {
